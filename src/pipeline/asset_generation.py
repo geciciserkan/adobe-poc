@@ -17,6 +17,9 @@ ASPECT_SIZES = {
     "16:9": (1920, 1080),
 }
 
+# Supported image generation models for OpenAI Images API
+SUPPORTED_IMAGE_MODELS = {"gpt-image-1", "dall-e-3"}
+
 
 def _hex_to_rgb(hex_color: str):
     h = hex_color.lstrip("#")
@@ -78,6 +81,9 @@ def _try_openai_generate(prompt: str, size_square: int, api_key: str | None, mod
     try:
         client = OpenAI(api_key=api_key)
         mdl = model or "gpt-image-1"
+        if mdl not in SUPPORTED_IMAGE_MODELS:
+            logger.warning("unsupported OPENAI_IMAGE_MODEL '%s'; defaulting to 'gpt-image-1'", mdl)
+            mdl = "gpt-image-1"
         resp = client.images.generate(model=mdl, prompt=prompt, size=f"{size_square}x{size_square}")
         b64 = resp.data[0].b64_json
         img_bytes = base64.b64decode(b64)

@@ -65,12 +65,50 @@ python -m agent.monitor --watch --interval 10
 ```
 - Agent triggers the pipeline for each new brief and logs a draft email if assets per product/aspect are <3.
 
+## Example Output
+- Aspect folders on disk use `x` instead of `:` for cross-platform safety: `1x1`, `9x16`, `16x9`.
+- Example after running the sample brief:
+```
+output/
+  AlphaSneaker/
+    1x1/
+      gen_1.png
+      gen_1_msg.png
+      gen_1_final.png
+    9x16/
+      gen_1.png
+      gen_1_msg.png
+      gen_1_final.png
+    16x9/
+      gen_1.png
+      gen_1_msg.png
+      gen_1_final.png
+  BetaSandal/
+    1x1/ ...
+    9x16/ ...
+    16x9/ ...
+```
+- If reusing assets, expect names like `exist_1.png`, `exist_1_msg.png`, `exist_1_final.png`.
+
 ## Environment
 - `.env` keys:
   - `OPENAI_API_KEY` (optional)
   - `OPENAI_IMAGE_MODEL=gpt-image-1` (optional)
   - `LOG_LEVEL=INFO`
   - `FONT_PATH` (optional, path to a .ttf font)
+
+## OpenAI Image Models
+- **Supported models for image generation**: `gpt-image-1`, `dall-e-3`.
+- If an unsupported model is set (e.g., `gpt-4o`), the app logs a warning and falls back to `gpt-image-1` automatically.
+- You can set the model via `.env` (`OPENAI_IMAGE_MODEL`) or per-brief (`openai_image_model`).
+
+## Key Design Decisions
+- **Local-first, cloud-ready**: Filesystem storage with optional extension to Dropbox/Azure/AWS.
+- **Model validation & fallback**: Unsupported image models automatically fall back to `gpt-image-1`.
+- **Graceful resilience**: Pillow placeholder images used if API is unavailable.
+- **Windows-safe paths**: Aspect directories use `1x1`, `9x16`, `16x9` on disk.
+- **Accurate variant counting**: Agent counts only `*_final.png` to avoid inflated counts.
+- **Compliance & moderation**: Simple brand color/logo checks and keyword moderation for demo purposes.
 
 ## Diagrams
 - Mermaid files in `docs/`.
@@ -84,6 +122,12 @@ See `input/briefs/sample_brief.yaml`.
 - Non-square images are derived by resizing/cropping from a base image.
 - Brand compliance checks are simplified (color usage and optional logo overlay).
 - Text moderation is a simple keyword blocker for demo purposes.
+
+## Troubleshooting
+- **No images generated**: Ensure `OPENAI_API_KEY` is set or expect Pillow placeholders.
+- **Logo not applied**: Verify `brand.logo_path` exists (e.g., `input/assets/brand/logo.png`).
+- **Fonts look off**: Set `FONT_PATH` to a valid `.ttf`.
+- **Model errors**: If using unsupported models (e.g., `gpt-4o` for Images API), the app falls back to `gpt-image-1` and logs a warning.
 
 ## License
 MIT (for take-home demo purposes).

@@ -62,3 +62,11 @@ def list_existing_assets(product: str, aspect_ratio: str, assets_root: str) -> L
 def get_aspect_list(brief: Dict) -> List[str]:
     aspects = brief.get("aspect_ratios") or ["1:1", "9:16", "16:9"]
     return [normalize_aspect(a) for a in aspects]
+
+
+def aspect_to_dir(aspect: str) -> str:
+    """Convert a human-readable aspect ratio to a filesystem-safe directory name.
+    Example: "1:1" -> "1x1", "9:16" -> "9x16".
+    """
+    a = normalize_aspect(aspect)
+    return a.replace(":", "x")

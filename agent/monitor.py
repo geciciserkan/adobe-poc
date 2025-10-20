@@ -7,7 +7,7 @@ from typing import Dict, List
 from dotenv import load_dotenv
 
 from src.utils.logger import get_logger
-from src.pipeline.asset_ingestion import load_brief
+from src.pipeline.asset_ingestion import load_brief, aspect_to_dir
 from main import run_pipeline
 
 logger = get_logger("agent.monitor")
@@ -40,10 +40,10 @@ def _list_briefs(folder: str) -> List[str]:
 
 
 def _count_outputs(output_root: str, product: str, aspect: str) -> int:
-    d = os.path.join(output_root, product, aspect)
+    d = os.path.join(output_root, product, aspect_to_dir(aspect))
     if not os.path.isdir(d):
         return 0
-    return len([fn for fn in os.listdir(d) if fn.lower().endswith((".png", ".jpg", ".jpeg", ".webp"))])
+    return len([fn for fn in os.listdir(d) if fn.lower().endswith("_final.png")])
 
 
 def _compose_email(brief_path: str, summary: Dict, variant_target: int) -> str:

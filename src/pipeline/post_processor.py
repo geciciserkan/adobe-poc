@@ -33,7 +33,11 @@ def overlay_text(in_path: str, text: str, out_path: str, color_hex: str | None):
     draw = ImageDraw.Draw(im)
     pad = max(16, w // 100)
     font = _get_font(max(20, w // 22))
-    tw, th = draw.textsize(text, font=font)
+    try:
+        bbox = draw.textbbox((0, 0), text, font=font)
+        tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
+    except Exception:
+        tw, th = draw.textsize(text, font=font)
     box_h = th + pad * 2
     box = Image.new("RGBA", (w, box_h), (0, 0, 0, 140))
     im.alpha_composite(box, (0, h - box_h))

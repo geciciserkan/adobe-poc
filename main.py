@@ -6,7 +6,7 @@ from typing import Dict, List
 from dotenv import load_dotenv
 
 from src.utils.logger import get_logger
-from src.pipeline.asset_ingestion import load_brief, get_assets_root, list_existing_assets, get_aspect_list
+from src.pipeline.asset_ingestion import load_brief, get_assets_root, list_existing_assets, get_aspect_list, aspect_to_dir
 from src.pipeline.asset_generation import generate_image, ASPECT_SIZES
 from src.pipeline.post_processor import ensure_dir, overlay_text, overlay_logo, moderate_text, brand_compliance_summary
 
@@ -44,7 +44,7 @@ def run_pipeline(brief_path: str) -> Dict:
         prod_summary = {}
         for aspect in aspects:
             size = ASPECT_SIZES.get(aspect)
-            out_dir = os.path.join(output_root, product, aspect)
+            out_dir = os.path.join(output_root, product, aspect_to_dir(aspect))
             ensure_dir(out_dir)
 
             existing = list_existing_assets(product, aspect, assets_root)
