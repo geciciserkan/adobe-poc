@@ -1,0 +1,69 @@
+%% Mermaid diagram: Creative Automation Pipeline Architecture
+flowchart TB
+  subgraph "Input Layer"
+    A["Campaign Brief<br/>YAML/JSON"]
+    B["Input Assets<br/>input/assets/"]
+    C["Brand Assets<br/>logo.png"]
+  end
+
+  subgraph "Orchestration"
+    D["Pipeline Orchestrator<br/>main.py"]
+    E["Asset Ingestion<br/>asset_ingestion.py"]
+  end
+
+  subgraph "Asset Generation"
+    F{"Asset Check"}
+    G["Reuse Existing<br/>Local Assets"]
+    H["Generate New<br/>OpenAI DALL-E 3"]
+    I["Fallback<br/>Pillow Placeholders"]
+  end
+
+  subgraph "Post-Processing"
+    J["Text Overlay<br/>Campaign Message"]
+    K["Logo Overlay<br/>Brand Identity"]
+    L["Compliance Check<br/>Colors & Logo"]
+    M["Text Moderation<br/>Prohibited Words"]
+  end
+
+  subgraph "Output Organization"
+    N["Structured Output<br/>output/{product}/"]
+    O["1:1 Square<br/>1024x1024"]
+    P["9:16 Portrait<br/>1080x1920"]
+    Q["16:9 Landscape<br/>1920x1080"]
+  end
+
+  subgraph "Monitoring & Alerts"
+    R["Agent Monitor<br/>agent/monitor.py"]
+    S["Variant Counter<br/>>=3 check"]
+    T["Email Drafts<br/>Stakeholder Alerts"]
+    U["Process State<br/>.processed.json"]
+  end
+
+  A --> D
+  B --> E
+  C --> K
+  D --> E
+  E --> F
+  F -->|Found| G
+  F -->|Missing| H
+  H -->|API Fail| I
+  G --> J
+  H --> J
+  I --> J
+  J --> K
+  K --> L
+  L --> M
+  M --> N
+  N --> O
+  N --> P
+  N --> Q
+  
+  R -->|Poll| A
+  R --> D
+  R --> S
+  S --> T
+  S --> U
+  
+  style H fill:#e1f5e1
+  style R fill:#ffe1e1
+  style L fill:#fff4e1

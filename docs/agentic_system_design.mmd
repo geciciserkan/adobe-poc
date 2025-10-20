@@ -1,0 +1,73 @@
+%% Mermaid diagram: AI Agent System Design & Orchestration
+flowchart TD
+  subgraph "Agent Core"
+    A["Agent Monitor<br/>agent/monitor.py"]
+    B["State Manager<br/>.processed.json"]
+    C["Polling Loop<br/>Interval: 10s"]
+  end
+
+  subgraph "Brief Processing"
+    D["Scan Briefs<br/>input/briefs/*.yaml"]
+    E{"New/Modified?"}
+    F["Load Brief<br/>YAML/JSON Parser"]
+    G["Extract Metadata<br/>Products, Region, Message"]
+  end
+
+  subgraph "Pipeline Execution"
+    H["Trigger Pipeline<br/>main.run_pipeline()"]
+    I["Asset Generation<br/>DALL-E 3 / Fallback"]
+    J["Post-Processing<br/>Overlays & Compliance"]
+    K["Output Creation<br/>3 Aspect Ratios"]
+  end
+
+  subgraph "Monitoring & Analytics"
+    L["Count Variants<br/>Per Product/Aspect"]
+    M{"Variants >= 3?"}
+    N["Success Log<br/>INFO Level"]
+    O["Alert Draft<br/>Email Template"]
+  end
+
+  subgraph "LLM Context Protocol"
+    P["Brief Data<br/>Products, Audience, Region"]
+    Q["Asset Status<br/>Counts & Paths"]
+    R["Compliance Results<br/>Brand & Legal Checks"]
+    S["System Logs<br/>Errors & Warnings"]
+  end
+
+  subgraph "Stakeholder Communication"
+    T["Email Generator<br/>Markdown Template"]
+    U["Recipients<br/>Creative Lead, AdOps"]
+    V["CC List<br/>IT, Legal/Compliance"]
+    W["Alert Content<br/>Variant Shortfall Details"]
+  end
+
+  A --> C
+  C --> D
+  D --> E
+  E -->|Yes| F
+  E -->|No| C
+  F --> G
+  G --> H
+  H --> I
+  I --> J
+  J --> K
+  K --> L
+  L --> M
+  M -->|Yes| N
+  M -->|No| O
+  O --> T
+  T --> U
+  T --> V
+  T --> W
+  N --> B
+  O --> B
+  
+  P -.-> H
+  Q -.-> L
+  R -.-> J
+  S -.-> O
+  
+  style A fill:#ffe1e1
+  style I fill:#e1f5e1
+  style O fill:#fff4e1
+  style T fill:#e1e1ff

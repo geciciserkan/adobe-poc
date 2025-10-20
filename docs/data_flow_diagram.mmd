@@ -1,0 +1,54 @@
+%% Mermaid diagram: Data Flow & Transformations
+graph LR
+  subgraph "Input Data"
+    A1["Campaign Brief<br/>products: list<br/>region: str<br/>audience: str<br/>message: str"]
+    A2["Brand Config<br/>colors.primary: hex<br/>logo_path: str"]
+    A3["Existing Assets<br/>{product}/{aspect}/<br/>*.png, *.jpg"]
+  end
+
+  subgraph "Processing Pipeline"
+    B1["Brief Parser<br/>YAML/JSON to Dict"]
+    B2["Asset Scanner<br/>Glob patterns<br/>Image extensions"]
+    B3["Image Generator<br/>OpenAI API Call<br/>Prompt Engineering"]
+    B4["Fallback Generator<br/>Pillow RGB<br/>Product text"]
+  end
+
+  subgraph "Transformations"
+    C1["Aspect Resizing<br/>1024x1024 base<br/>to 1080x1920<br/>to 1920x1080"]
+    C2["Text Overlay<br/>Pillow ImageDraw<br/>Alpha composite"]
+    C3["Logo Overlay<br/>Resize to 1/8 width<br/>Top-left placement"]
+    C4["Compliance Scoring<br/>Brand color check<br/>Logo presence"]
+  end
+
+  subgraph "Output Structure"
+    D1["File Organization<br/>output/<br/>- AlphaSneaker/<br/>  - 1:1/<br/>  - 9:16/<br/>  - 16:9/<br/>- BetaSandal/<br/>  - 1:1/<br/>  - 9:16/<br/>  - 16:9/"]
+    D2["Naming Convention<br/>exist_1.png<br/>exist_1_msg.png<br/>exist_1_final.png<br/>gen_1.png<br/>gen_1_msg.png<br/>gen_1_final.png"]
+  end
+
+  subgraph "Metadata & Logs"
+    E1["Pipeline Summary<br/>products: dict<br/>aspects: list<br/>counts: int"]
+    E2["Compliance Report<br/>text_color: hex<br/>logo_present: bool<br/>checks: list"]
+    E3["Agent State<br/>.processed.json<br/>mtime tracking"]
+  end
+
+  A1 --> B1
+  A2 --> B1
+  A3 --> B2
+  B1 --> B3
+  B2 -->|Missing| B3
+  B3 -->|Fail| B4
+  B2 -->|Found| C1
+  B3 --> C1
+  B4 --> C1
+  C1 --> C2
+  C2 --> C3
+  C3 --> C4
+  C4 --> D1
+  D1 --> D2
+  C4 --> E1
+  E1 --> E2
+  E2 --> E3
+
+  style B3 fill:#e1f5e1
+  style C2 fill:#fff4e1
+  style E1 fill:#e1e1ff
