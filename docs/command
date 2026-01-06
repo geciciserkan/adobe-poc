@@ -1,1 +1,1 @@
-split -b 80m "/Users/serkan/Documents/projects/ai-automation/kiro-ide-0.6.32-stable-darwin-arm64.dmg" "kiro.dmg.part."
+cat kiro.dmg.part.* > "kiro-ide-0.6.32-stable-darwin-arm64.dmg"
